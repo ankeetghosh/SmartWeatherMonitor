@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Include meta tag to ensure proper rendering and touch zooming -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Include jQuery Mobile stylesheets -->
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+  <!-- Include the jQuery library -->
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+ 
+  <!-- Include the jQuery Mobile library -->
+  <script>
+    $(document).bind('mobileinit',function(){
+        $.mobile.changePage.defaults.changeHash = false;
+        $.mobile.hashListeningEnabled = false;
+        $.mobile.pushStateEnabled = false;
+		$.support.cors = true;
+		$.mobile.allowCrossDomainPages = true; 
+    });
+</script> 
+  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+  <script src="liquidFillGauge.js" language="JavaScript"></script>
+  
+  <link href="./build/nv.d3.css" rel="stylesheet" type="text/css">
+
+  <script src="./build/nv.d3.js"></script>
+  <script src="lib/stream_layers.js"></script>
+    <style>
+        .liquidFillGaugeText { font-family: Helvetica; font-weight: bold; }
+		
+		
+		
+        #chart1 svg{
+		
+            padding: 0px;
+		height: 400px;
+		width: 100%;
+		
+		overflow: auto;
+		
+  
+		}
+		
+	.ui-bar-b {
+    border: 1px solid #456f9a;
+    background: #5e87b0;
+    color: #fff;
+    font-weight: bold;
+    text-shadow: 0 -1px 1px #254f7a;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#81a8ce),to(#5e87b0));
+    background-image: -webkit-linear-gradient(#81a8ce,#5e87b0);
+    background-image: -moz-linear-gradient(#81a8ce,#5e87b0);
+    background-image: -ms-linear-gradient(#81a8ce,#5e87b0);
+    background-image: -o-linear-gradient(#81a8ce,#5e87b0);
+    background-image: linear-gradient(#81a8ce,#5e87b0);
+}
+
+	#backHome {
+    background: transparent url(wallpaper1.jpg);
+	background-size:100% 100%;
+}
+
+#backHis {
+    background: transparent url(wallpaper.jpg);
+	background-size:100% 100%;
+}
+#fontt{
+    font: bold 26px/30px Tahoma,Helvetica,sans-serif;
+}
+
+.fonttt{
+    font: bold 15px/25px Tahoma,Helvetica,sans-serif;
+	overflow:auto;
+}
+
+
+#date{
+    font: bold 26px/30px Tahoma,Helvetica,sans-serif;
+}
+
+#al{
+	overflow: auto;
+}
+    </style>
+</head>
+<body onload="startTime()">
+
+<div data-role="page" id="pageone"  >
+  <div data-role="header" class="ui header ui-bar-b" >	
+   <a href="#pageone"  class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left" >Home</a>
+      
+	  <h1>Smart Weather Monitor</h1>
+
+   <a href="#SearchPage" class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+    <div data-role="navbar">
+      <ul>
+		<li><a href="#History" class="ui-shadow">Historical Data Analysis</a></li>
+		<li><a href="#pageone" class="ui-shadow">Home</a></li>
+        <li><a href="#Alerts" class="ui-shadow">Alerts</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div data-role="main" class="ui-content" align="center" id="backHome">
+		<div class = "center">
+			<p id="fontt" >Current Humidity</p>
+            <svg id="fillgauge1" width="97%" height="150"  style="margin:auto" onclick="gauge1.update(CurrHumid());"></svg>
+			
+			<p id="fontt" >Current Temperature</p>
+			<svg id="fillgauge6" width="97%" height="150" style="margin:auto"  onclick="gauge6.update(CurrTemp());"></svg>
+			<p id="date"></p>
+
+        </div>
+	
+  </div>
+
+  <div data-role="footer" class="ui header ui-bar-b" >
+    <div data-role="footer" style="text-align:center;">
+    <div data-role="controlgroup" data-type="horizontal">
+      <a href="http://www.facebook.com" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left">Add Us On Facebook</a>
+      <a href="http://www.twitter.com" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left">Add Us On Twitter</a>
+    </div>
+  </div>
+
+  </div>
+</div> 
+
+<div data-role="page" id="SearchPage">
+ <div data-role="header" class="ui header ui-bar-b">
+   <a href="#pageone" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+      
+	  <h1>Smart Weather Monitor</h1>
+
+   <a href="#SearchPage" class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+
+ </div>
+  <div data-role="main" class="ui-content">
+    <h2>Search the Charts by typing below</h2>
+    <form class="ui-filterable">
+      <input id="myFilter" data-type="search">
+    </form>
+    <ul data-role="listview" data-filter="true" data-input="#myFilter" data-autodividers="true" data-inset="true">
+      <li><a href="#pageone">Current Temperature</a></li>
+      <li><a href="#pageone">Current Humidity</a></li>
+	  <li><a href="#Alerts">Current Temperature Alerts</a></li>
+      <li><a href="#Alerts">Current Humidity Alerts</a></li>
+	  <li><a href="#Alerts">Current Temperature & Humidity Alerts</a></li>
+	  <li><a href="#History">Historical Temperature Analysis Charts</a></li>
+	  <li><a href="#History">Historical Temperature & Humidity Analysis Charts</a></li>
+	  
+	  
+
+    </ul>
+  </div>
+ 
+</div>
+
+<div data-role="page" id="Alerts">
+ <div data-role="header" class="ui header ui-bar-b">
+   <a href="#pageone" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+      
+	  <h1>Temperature and Humidity Alerts</h1>
+
+   <a href="#SearchPage" class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+
+ </div>
+  <div data-role="main" class="ui-content">
+	<div data-role="collapsible" data-collapsed="false" id= "al">
+      <h1>Comfort</h1>
+      <p id="comment" class="fonttt"></p>
+      <div data-role="collapsible" data-collapsed="false" id= "al">
+        <h1>Humidity Check</h1>
+        <p id="comment1" class="fonttt"></p>
+      </div>
+	
+    </div>
+	<div data-role="collapsible" data-collapsed="false" id= "al" >
+      <h1>Content</h1>
+      <p>content</p>
+      <div data-role="collapsible" data-collapsed="false" id= "al">
+        <h1>content</h1>
+        <p>content</p>
+      </div>
+
+    </div>
+
+  </div>
+  
+  <div data-role="footer" class="ui header ui-bar-b" >
+    <div data-role="footer" style="text-align:center;">
+    <div data-role="controlgroup" data-type="horizontal">
+      <a href="http://www.facebook.com" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left">Add Us On Facebook</a>
+      <a href="http://www.twitter.com" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left">Add Us On Twitter</a>
+    </div>
+  </div>
+</div> 
+ 
+</div>
+
+<div data-role="page" id="History">
+ <div data-role="header" class="ui header ui-bar-b">
+   <a href="#pageone" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+      
+	  <h1>Historical Data Analysis</h1>
+
+   <a href="#SearchPage" class="ui-btn ui-corner-all ui-shadow ui-icon-search ui-btn-icon-left">Search</a>
+
+ </div>
+  <div data-role="main" class="ui-content" id="backHis">
+	
+		<p id="fontt">Historical Analysis of Temperature and Humidity (Select grouped for better Assessment)</p>
+		<div id="chart1">
+			<svg class="content"  ></svg>
+		</div>
+		 <p id="fontt">Historical Analysis of Temperature</p>
+		<svg id="test1"  width="97%" height="500" "></svg>
+	
+  </div>
+ 
+  <div data-role="footer" class="ui header ui-bar-b" >
+ 
+    <div data-role="footer" style="text-align:center;">
+    <div data-role="controlgroup" data-type="horizontal">
+      <a href="http://www.facebook.com" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left">Add Us On Facebook</a>
+      <a href="http://www.twitter.com" class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left">Add Us On Twitter</a>
+    </div>
+  </div>
+</div>  
+</div>
+
+
+
+
+<script>
+ var w = $(window).width() - 50;
+ $('.content').css('width', w);
+ 
+ //var w = $(window).width() - 75;
+ //$('.content1').css('width', w);
+ 
+function startTime() {
+    var today = new Date();
+	var dat=(today.getMonth() +1) + "/" +today.getDate() + "/" +today.getFullYear();
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    m = checkTime(m);
+    s = checkTime(s);
+    document.getElementById('date').innerHTML = dat + " "+	
+    h + ":" + m + ":" + s;
+    var t = setTimeout(startTime, 500);
+}
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+    return i;
+}
+
+
+
+
+var url = 'data.txt';
+//var auth = make_base_auth(apikey,apiToken);
+//alert(auth);
+
+var tempHumData;
+var currentTemp, currentHumid;
+var long_short_data;
+$(document).ready(function(){
+ //setInterval(function(){
+$.ajax({  
+    url: url,
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: 'text',
+	success: function(data) {
+	tempHumData = JSON.parse(data);
+	//var valTemp =  '{"label":"Latest Reading","value":'+ tempHumData.events[0].evt.TempF+'}';
+	//var valHum =  '{"label":"Latest Reading","value":'+ tempHumData.events[0].evt['Humid%'] +'}';
+	
+	currentTemp = tempHumData.events[0].evt.TempF;
+	currentHumid= tempHumData.events[0].evt['Humid%'];
+	
+if(parseInt(currentTemp) > 73.4)
+	document.getElementById("comment").innerHTML += Date()+": The Current room temperature is "+ currentTemp +". Please reduce the temperature of the air conditioner accordingly.";
+	
+if(parseInt(currentTemp) <= 73.4)
+	document.getElementById("comment").innerHTML += Date()+": The Current room temperature is "+ currentTemp +", which is within the optimal range.";
+	
+if(parseInt(currentHumid) > 50)
+	document.getElementById("comment1").innerHTML += Date()+": The Current humidity is "+ currentHumid +"%. Please run the air conditioner in dry mode.";
+	
+if(parseInt(currentHumid) <= 50)
+	document.getElementById("comment1").innerHTML += Date()+": The Current humidity is "+ currentHumid +"%. which is within the optimal range";
+	
+	//var valTemp =  '{"label":"Latest Reading","value":'+ tempHumData.events[0].evt.TempF+'}';
+	//var valHum =  '{"label":"Latest Reading","value":'+ tempHumData.events[0].evt['Humid%'] +'}';
+	
+	/*var i;
+	for (i=1; i<25; i++)
+	{
+	valTemp1=  ',' + '{"label":"Data Group'+i+'","value":'+ tempHumData.events[i+2].evt.TempF+'}';
+	var valHum1= ',' + '{"label":"Data Group' + i + '","value":'+ tempHumData.events[i+2].evt['Humid%']+'}';
+	}
+	 long_short_data ='[{key:'+'\'Temperature\''+',visible:"true",values:['+valTemp+valTemp1+']},{key:'+'\'Humidity\''+',visible:"true",values:['+valHum+valHum1+']}]';*/
+
+
+	//alert(currentHumid);
+	}
+});
+
+if(parseInt(currentTemp) > 73.4)
+	document.getElementById("comment").innerHTML += Date()+": The Current room temperature is "+ currentTemp +". Please reduce the temperature of the air conditioner accordingly.";
+	
+if(parseInt(currentTemp) <= 73.4)
+	document.getElementById("comment").innerHTML += Date()+": The Current room temperature is "+ currentTemp +", which is within the optimal range.";
+	
+if(parseInt(currentHumid) > 50)
+	document.getElementById("comment1").innerHTML += Date()+": The Current humidity is "+ currentHumid +"%. Please run the air conditioner in dry mode.";
+	
+if(parseInt(currentHumid) <= 50)
+	document.getElementById("comment1").innerHTML += Date()+": The Current humidity is "+ currentHumid +"%. which is within the optimal range";
+	
+
+//console.log(long_short_data);
+//});
+setTimeout(function gauge(){ 
+
+
+	//alert(tempHumData.events[0].evt.TempF);
+
+
+	//if(currentTemp!= '' && currentHumid != '')
+	
+    var gauge1 = loadLiquidFillGauge("fillgauge1", parseInt(currentHumid));
+
+
+	var config5 = liquidFillGaugeDefaultSettings();
+    config5.circleThickness = 0.4;
+    config5.circleColor = "#134cb9";
+    config5.textColor = "#2364e1";
+    config5.waveTextColor = "#2364e1";
+    config5.waveColor = "#134cb9";
+    config5.textVertPosition = 0.52;
+    config5.waveAnimateTime = 5000;
+    config5.waveHeight = 0;
+    config5.waveAnimate = false;
+    config5.waveCount = 2;
+    config5.waveOffset = 0.25;
+    config5.textSize = 1.2;
+    config5.minValue = 30;
+    config5.maxValue = 150
+    config5.displayPercent = false;
+    var gauge6 = loadLiquidFillGauge("fillgauge6", parseInt(currentTemp), config5);
+
+    function CurrTemp(){
+        return parseInt(currentTemp);
+    }
+	
+	function CurrHumid(){
+        return parseInt(currentHumid);
+    }
+}, 
+2000);
+
+//}, 3000);	
+
+
+	
+	
+	
+//------------------------------------------------
+
+	
+var chart;
+    nv.addGraph(function() {
+	//alert(tempHumData.events[0].evt.TempF);
+	$.ajax({  
+    url: url,
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: "text",
+	success: function(result) {
+		result = JSON.parse(result);
+		var temp = [];
+
+        for (var i = 0; i < 100; i++) {
+            temp.push({x: result.events[i].evt.counter, y: result.events[i].evt.TempF});
+        }
+
+        var allTemp= [{values: temp,key: "Temperature",color: "#ff7f0e"}];
+		
+        chart = nv.models.historicalBarChart();
+        chart
+            .margin({left: 100, bottom: 100})
+            .useInteractiveGuideline(true)
+            .duration(250)
+            ;
+
+        // chart sub-models (ie. xAxis, yAxis, etc) when accessed directly, return themselves, not the parent chart, so need to chain separately
+        chart.xAxis
+            .axisLabel("Time from when the sensor started running (s)")
+            .tickFormat(d3.format(',.1f'));
+
+        chart.yAxis
+            .axisLabel('Temperature')
+            .tickFormat(d3.format(',.2f'));
+
+        chart.showXAxis(true);
+
+        d3.select('#test1')
+            .datum(allTemp)
+            .transition()
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
+        chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+        return chart;
+		}
+});
+    });
+
+    //Simple test data generators
+  /*  function sinAndCos() {
+	
+        var sin = [],
+            cos = [];
+
+        for (var i = 0; i < 100; i++) {
+            sin.push({x: i, y: Math.sin(i/10)});
+            cos.push({x: i, y: .5 * Math.cos(i/10)});
+        }
+
+        return [
+            {values: sin, key: "Sine Wave", color: "#ff7f0e"},
+            {values: cos, key: "Cosine Wave", color: "#2ca02c"}
+        ];
+	
+    }*/
+
+    function sinData() {
+	
+        var sin = [];
+
+        for (var i = 0; i < 100; i++) {
+            sin.push({x: i, y: Math.sin(i/10) * Math.random() * 100});
+        }
+
+        return [{
+            values: sin,
+            key: "Sine Wave",
+            color: "#ff7f0e"
+        }];
+		
+    }
+//----------------
+
+//long_short_data = long_short_data;
+
+	$.ajax({  
+    url: url,
+    type: 'GET',
+    contentType: 'application/json',
+    dataType: "text",
+	success: function(result) {
+	result= JSON.parse(result);
+
+	//var long_short_data = '[{key:'+'\'Temperature\''+',visible:"true",values:['+valTemp+valTemp1+']},{key:'+'\'Humidity\''+',visible:"true",values:['+valHum+valHum1+']}]';
+	//var long_Short_data=[{key:'Temperature',visible:"true",values:[{"label":"LatestReading","value":71.6},{"label":"DataGroup24","value":71.6}]},{key:'Humidity',visible:"true",values:[{"label":"LatestReading","value":80},{"label":"DataGroup24","value":81}]}];
+	//alert(result.events[0].timestamp['$date']);
+	var date1 = new Date(result.events[0].timestamp['$date']);
+	date1 = date1.getHours() + ":" +date1.getMinutes() + ":" +date1.getSeconds();
+	var date2 = new Date(result.events[10].timestamp['$date']);
+	date2 = date2.getHours() + ":" +date2.getMinutes() + ":" +date2.getSeconds();
+	var date3 = new Date(result.events[20].timestamp['$date']);
+	date3 = date3.getHours() + ":" +date3.getMinutes() + ":" +date3.getSeconds();
+	var date4 = new Date(result.events[30].timestamp['$date']);
+	date4 = date4.getHours() + ":" +date4.getMinutes() + ":" +date4.getSeconds();
+	var date5 = new Date(result.events[40].timestamp['$date']);
+	date5 = date5.getHours() + ":" +date5.getMinutes() + ":" +date5.getSeconds();
+	var date6 = new Date(result.events[50].timestamp['$date']);
+	date6 = date6.getHours() + ":" +date6.getMinutes() + ":" +date6.getSeconds();
+	var date7 = new Date(result.events[60].timestamp['$date']);
+	date7 = date7.getHours() + ":" +date7.getMinutes() + ":" +date7.getSeconds();
+	var date8 = new Date(result.events[70].timestamp['$date']);
+	date8 = date8.getHours() + ":" +date8.getMinutes() + ":" +date8.getSeconds();
+	var date9 = new Date(result.events[80].timestamp['$date']);
+	date9 = date9.getHours() + ":" +date9.getMinutes() + ":" +date9.getSeconds();
+	var date10 = new Date(result.events[90].timestamp['$date']);
+	date10 = date10.getHours() + ":" +date10.getMinutes() + ":" +date10.getSeconds();
+	var date11 = new Date(result.events[99].timestamp['$date']);
+	date11 = date11.getHours() + ":" +date11.getMinutes() + ":" +date11.getSeconds();
+	
+	var long_short_data = [
+        {
+            key: 'Temperature',
+            values: [
+                {
+                    "label" : date1 ,
+                    "value" : result.events[0].evt.TempF
+                } ,
+                {
+                    "label" : date2 ,
+                    "value" : result.events[10].evt.TempF
+                } ,
+                {
+                    "label" : date3 ,
+                    "value" : result.events[20].evt.TempF
+                } ,
+                {
+                    "label" : date4 ,
+                    "value" : result.events[30].evt.TempF
+                } ,
+                {
+                    "label" : date5 ,
+                    "value" : result.events[40].evt.TempF
+                } ,
+                {
+                    "label" : date6 ,
+                    "value" : result.events[50].evt.TempF
+                } ,
+                {
+                    "label" : date7 ,
+                    "value" : result.events[60].evt.TempF
+                } ,
+                {
+                    "label" : date8 ,
+                    "value" : result.events[70].evt.TempF
+                } ,
+                {
+                    "label" : date9 ,
+                    "value" : result.events[80].evt.TempF
+                },
+				{
+                    "label" : date10 ,
+                    "value" : result.events[90].evt.TempF
+                },
+				{
+                    "label" : date11 ,
+                    "value" : result.events[99].evt.TempF
+                }
+            ]
+        },
+        {
+            key: 'Humidity',
+            values: [
+                {
+                    "label" : date1 ,
+                    "value" : result.events[0].evt['Humid%']
+                } ,
+                {
+                    "label" : date2 ,
+                    "value" : result.events[10].evt['Humid%']
+                } ,
+                {
+                    "label" : date3 ,
+                    "value" : result.events[20].evt['Humid%']
+                } ,
+                {
+                    "label" : date4 ,
+                    "value" : result.events[30].evt['Humid%']
+                } ,
+                {
+                    "label" : date5 ,
+                    "value" : result.events[40].evt['Humid%']
+                } ,
+                {
+                    "label" : date6 ,
+                    "value" : result.events[50].evt['Humid%']
+                } ,
+                {
+                    "label" : date7 ,
+                    "value" : result.events[60].evt['Humid%']
+                } ,
+                {
+                    "label" : date8 ,
+                    "value" : result.events[70].evt['Humid%']
+                } ,
+                {
+                    "label" : date9 ,
+                    "value" : result.events[80].evt['Humid%']
+                },
+				{
+                    "label" : date10 ,
+                    "value" : result.events[90].evt['Humid%']
+                },
+				{
+                    "label" : date11 ,
+                    "value" : result.events[99].evt['Humid%']
+                }
+            ]
+        }   
+    ];
+	
+
+
+ var chart;
+    nv.addGraph(function() {
+
+	
+	
+        chart = nv.models.multiBarHorizontalChart()
+            .x(function(d) { return d.label })
+            .y(function(d) { return d.value })
+            .yErr(function(d) { return [-Math.abs(d.value * Math.random() * 0.3), Math.abs(d.value * Math.random() * 0.3)] })
+            .barColor(d3.scale.category20().range())
+            .duration(250)
+            .margin({left: 100})
+            .stacked(false);
+
+        chart.yAxis.tickFormat(d3.format(',.2f'));
+
+        chart.yAxis.axisLabel('');
+        chart.xAxis.axisLabel('').axisLabelDistance(20);
+
+        d3.select('#chart1 svg')
+            .datum(long_short_data)
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+        chart.state.dispatch.on('change', function(state){
+            nv.log('state', JSON.stringify(state));
+        });
+        return chart;
+    });
+}
+});
+});	
+</script>
+
+</body>
+</html>
